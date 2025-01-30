@@ -26,7 +26,36 @@ dataset = read_csv(url, names=names)
 
 #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
 #dataset.hist()
-scatter_matrix(dataset)
+#scatter_matrix(dataset)
+#plt.show()
+
+#split training data
+array = dataset.values
+x = array[:,0:4]
+y = array[:,4]
+xtrain, xvalid, ytrain, yvalid = train_test_split(x, y, test_size=0.20, random_state=1)
+
+# Spot Check Algorithms
+models = []
+models.append(('LR', LogisticRegression(solver='liblinear', multi_class='ovr')))
+models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('KNN', KNeighborsClassifier()))
+models.append(('CART', DecisionTreeClassifier()))
+models.append(('NB', GaussianNB()))
+models.append(('SVM', SVC(gamma='auto')))
+
+results = []
+names = []
+for name, model in models:
+	kfold = StratifiedKFold(n_splits=10, random_state=1, shuffle=True)
+	cv_results = cross_val_score(model, xtrain, ytrain, cv=kfold, scoring='accuracy')
+	results.append(cv_results)
+	names.append(name)
+	print('%s: %f (%f)' % (name, cv_results.mean(), cv_results.std()))
+	
+# Compare Algorithms
+plt.boxplot(results, labels=names)
+plt.title('Algorithm Comparison')
 plt.show()
 
 print("Success")
