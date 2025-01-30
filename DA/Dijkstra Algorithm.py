@@ -5,14 +5,14 @@ class Graph:
 	def __init__(self,num_nodes):
 		#create a matrix for the graph that holds all nodes and weights/travel time
 		#set default val to 0
-		self.adj_matrix= [[0]*num_nodes for _ in range(size)]
+		self.adj_matrix= [[0]*num_nodes for _ in range(num_nodes)]
 		self.num_nodes = num_nodes
 		#creating a list to hold the names of the nodes
 		self.nodes_list = [''] * num_nodes
 
 	def add_edge(self, u, v, weight):
 		# check to make sure node u and v are valid nodes in nodes list
-		if 0 <= u < self.num_nodes and 0<= v < self.num_nodes
+		if 0 <= u < self.num_nodes and 0<= v < self.num_nodes:
 			self.adj_matrix[u][v] = weight
 			self.adj_matrix[v][u] = weight #travel a-b should be same as b-a
 
@@ -24,8 +24,8 @@ class Graph:
 		#finding the pos of the start node using the node name
 		start_index = self.nodes_list.index(start_node)
 		#set default values, traved to = false, fastest = inf, index at 0
-		distances = [float('inf')] * self.num_nodes
-		distances[start_index] = 0
+		distance = [float('inf')] * self.num_nodes
+		distance[start_index] = 0
 		visited = [False] * self.num_nodes
 		#create a list to keep track of the path
 		predecessor = [None] * self.num_nodes
@@ -52,16 +52,44 @@ class Graph:
 					if newpath < distance[v]:
 						distance[v] = newpath
 						predecessor[v] = u
-		return distances, predecessor
+		return distance, predecessor
 
-		def get_path(self, predecessor, start_node, end_node):
-			path=[]
-			current = self.nodes_list.index(end_node)
-			while current is not None:
-				path.insert(0, self.nodes_list[current])
-				current = predecessor[current]
-				if current == self.nodes_list(start_node):
-					path.insert(0, start_node)
-					break
-			return '->'.join(path)
+	def get_path(self, predecessor, start_node, end_node):
+		path=[]
+		current = self.nodes_list.index(end_node)
+		while current is not None:
+			path.insert(0, self.nodes_list[current])
+			current = predecessor[current]
+			if current == self.nodes_list.index(start_node):
+				path.insert(0, start_node)
+				break
+		return '->'.join(path)
+
+g = Graph(7)
+
+g.add_node_data(0, 'A')
+g.add_node_data(1, 'B')
+g.add_node_data(2, 'C')
+g.add_node_data(3, 'D')
+g.add_node_data(4, 'E')
+g.add_node_data(5, 'F')
+g.add_node_data(6, 'G')
+
+g.add_edge(3, 0, 4)  # D -> A, weight 5
+g.add_edge(3, 4, 2)  # D -> E, weight 2
+g.add_edge(0, 2, 3)  # A -> C, weight 3
+g.add_edge(0, 4, 4)  # A -> E, weight 4
+g.add_edge(4, 2, 4)  # E -> C, weight 4
+g.add_edge(4, 6, 5)  # E -> G, weight 5
+g.add_edge(2, 5, 5)  # C -> F, weight 5
+g.add_edge(1, 2, 2)  # B -> C, weight 2
+g.add_edge(1, 5, 2)  # B -> F, weight 2
+g.add_edge(6, 5, 5)  # G -> F, weight 5
+
+# Dijkstra's algorithm from D to all vertices
+print("Dijkstra's Algorithm starting from vertex D:\n")
+distance, predecessor = g.dijkstra('D')
+for i, d in enumerate(distance):
+	path= g.get_path(predecessor, 'D', g.nodes_list[i])
+	print(f"{path}, Distance: {d}")
 
