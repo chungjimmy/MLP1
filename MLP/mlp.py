@@ -54,8 +54,17 @@ for name, model in models:
 	print('%s: %f (%f)' % (name, cv_results.mean(), cv_results.std()))
 	
 # Compare Algorithms
-plt.boxplot(results, labels=names)
-plt.title('Algorithm Comparison')
-plt.show()
+#plt.boxplot(results, labels=names)
+#plt.title('Algorithm Comparison')
+#plt.show()
+
+#make predictions
+model = SVC(gamma='auto')
+model.fit(xtrain, ytrain)
+predictions = model.predict(xtrain)
+
+print(accuracy_score(ytrain, predictions))
+print(confusion_matrix(ytrain, predictions))
+print(classification_report(ytrain, predictions))
 
 print("Success")
